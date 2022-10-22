@@ -72,7 +72,7 @@ T1
     2 => <<<T2
 {
     "method": "POST",
-    "uri": "\/doc\/test",
+    "uri": "/doc/test HTTP/1.1",
     "headers": [
         [
             "Host",
