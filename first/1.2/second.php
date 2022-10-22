@@ -23,32 +23,16 @@ $contents = readHttpLikeInput();
 
 function parseTcpStringAsHttpRequest($string)
 {
-    $whereSpace = [];
-    $temp = 0;
-    $counter = 0;
-    for ($i = 0; $i < strlen($string); $i++) {
-        if (strpos($string, "\n", $i) > $temp) {
-            $temp = strpos($string, "\n", $i);
-            $whereSpace[$counter] = strpos($string, "\n", $i);
-            $counter++;
-        }
+    if (strpos($string, "POST")) {
+        echo "YES";
     }
 
-    $headers = [];
-
-    $method = substr($string, 0, $whereSpace[0]);
-    $uri = substr($string, $whereSpace[0], $whereSpace[1]);
-    $body = substr($string, $whereSpace[6]);
-    echo $method . "  METHOD \n";
-    echo $uri . "  URI \n";
-    echo $body . " BODY \n";
-
-    return array(
+    return null; /*array(
         "method" => $method,
         "uri" => $uri,
 //        "headers" => ...,
         "body" => $body
-    );
+    );*/
 }
 
 $http = parseTcpStringAsHttpRequest($contents);
