@@ -39,7 +39,6 @@ function parseTcpStringAsHttpRequest($string)
     }
     $method = substr($string, 0, $paragraphPlaceArray[0]);
     // get method
-    $uri = null;
     if (str_contains($method, "POST")) {
         $uri = str_replace("POST ", "", $method);
         $method = "POST";
