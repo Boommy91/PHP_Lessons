@@ -44,7 +44,13 @@ $statusmessage
 
 function processHttpRequest($method, $uri, $headers, $body)
 {
-    if ($method == 'GET' && strpos($uri, '?nums=')) {
+    $tempArr = explode("&", $body);
+    $loginArr = explode("=", $tempArr[0]);
+    $passArr = explode("=", $tempArr[1]);
+    var_dump($loginArr);
+    var_dump($passArr);
+
+    if ($method == 'POST' && strpos($uri, '?nums=')) {
         if (isBeginSum($uri)) {
             $statuscode = '200 OK';
             $statusmessage = sumInUri($uri);
