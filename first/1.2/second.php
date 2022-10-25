@@ -23,36 +23,25 @@ $contents = readHttpLikeInput();
 
 function parseTcpStringAsHttpRequest($string)
 {
-
-    $tempNum = 0;
-    $paragraphPlaceArray = array();
-
-    for ($i = 0; $i < strlen($string); $i++) {
-        if (strpos($string, "\n", $i) > $tempNum) {
-
-            $paragraphPlaceArray[] = strpos($string, "\n", $i);
-            $tempNum = strpos($string, "\n", $i);
-        }
-    }
-    foreach ($paragraphPlaceArray as $item) {
-        echo $item . "  ";
-    }
-    $method = substr($string, 0, $paragraphPlaceArray[0]);
-    // get method
-    if (str_contains($method, "POST")) {
+    $tempArray = explode("\n", $string);
+    $method = $tempArray[0];
+    if (str_contains("POST", $method) == false) {
         $uri = str_replace("POST ", "", $method);
         $method = "POST";
     } else {
         $uri = str_replace("GET ", "", $method);
         $method = "GET";
     }
-    $body = "bookId=12345&author=Tan+Ah+Teck";
+    for ($i = 1; $i < sizeof($tempArray) - 2; $i++) {
+        $tempHeadersArray = explode(': ', $tempArray[$i]);
+        $headers[$i - 1] = array($tempHeadersArray[0], $tempHeadersArray[1]);
+    }
+    $body = $tempArray[sizeof($tempArray) - 1];
     var_dump($uri);
-
     return array(
         "method" => $method,
-        "uri" => "/doc/test HTTP/1.1",
-//        "headers" => $headers,
+        "uri" => $uri,
+        "headers" => $headers,
         "body" => $body
     );
 }
