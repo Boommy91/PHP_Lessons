@@ -23,8 +23,10 @@ $contents = readHttpLikeInput();
 
 function parseTcpStringAsHttpRequest($string)
 {
+
     $tempArray = explode("\n", $string);
     $method = $tempArray[0];
+
     if (str_contains("POST", $method) == false) {
         $uri = str_replace("POST ", "", $method);
         $method = "POST";
@@ -32,12 +34,13 @@ function parseTcpStringAsHttpRequest($string)
         $uri = str_replace("GET ", "", $method);
         $method = "GET";
     }
+
     for ($i = 1; $i < sizeof($tempArray) - 2; $i++) {
         $tempHeadersArray = explode(': ', $tempArray[$i]);
         $headers[$i - 1] = array($tempHeadersArray[0], $tempHeadersArray[1]);
     }
+
     $body = $tempArray[sizeof($tempArray) - 1];
-    var_dump($uri);
     return array(
         "method" => $method,
         "uri" => $uri,
