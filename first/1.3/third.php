@@ -22,24 +22,26 @@ function readHttpLikeInput()
 $contents = readHttpLikeInput();
 
 
-function outputHttpResponse($statuscode, $statusmessage, $headers, $body) {
-    ...
-    echo ...;
+function outputHttpResponse($statuscode, $statusmessage, $headers, $body)
+{
+
 }
 
-function processHttpRequest($method, $uri, $headers, $body) {
-    ...
-    outputHttpResponse(...);
+function processHttpRequest($method, $uri, $headers, $body)
+{
+
+
+    $statuscode = '';
+    $statusmessage = '';
+    outputHttpResponse($statuscode, $statusmessage, $headers, $body);
 }
 
 
 function parseTcpStringAsHttpRequest($string)
 {
-
     $tempArray = explode("\n", $string);
     $method = $tempArray[0];
-
-    if (str_contains("POST", $method) == false) {
+    if (str_contains($method, "POST") == true) {
         $uri = str_replace("POST ", "", $method);
         $method = "POST";
     } else {
