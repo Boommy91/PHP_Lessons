@@ -24,17 +24,60 @@ $contents = readHttpLikeInput();
 
 function outputHttpResponse($statuscode, $statusmessage, $headers, $body)
 {
-    echo null;
+    $finalMessage = "HTTP/1.1 $statuscode
+    Server: Apache/2.2.14 (Win32)
+    Connection: Closed
+    Content-Type: text/html; charset=utf-8
+    Content-Length: 2
+    
+    $statusmessage
+";
+
+    /*foreach ($headers as $header) {
+        $finalMessage .= "\n";
+        foreach ($header as $value) {
+            $finalMessage .= $value;
+        }
+    }
+    $finalMessage .= "\n" . $body;*/
+    echo $finalMessage;
 }
 
 function processHttpRequest($method, $uri, $headers, $body)
 {
-    if ($method === 'GET'){
-
+    if ($method == 'GET' && strpos($uri, '?nums=')) {
+        if (isBeginSum($uri)) {
+            $statuscode = '200 OK';
+            $statusmessage = sumInUri($uri);
+        } else {
+            $statuscode = '400 Not Found';
+            $statusmessage = 'not found';
+        }
+    } else {
+        $statuscode = "400 Bad Request";
     }
-    $statuscode = '';
-    $statusmessage = '';
     outputHttpResponse($statuscode, $statusmessage, $headers, $body);
+}
+
+function isBeginSum($uri)
+{
+    $tempArray = explode("?", $uri);
+    if ($tempArray[0] == "/sum") {
+        return true;
+    }
+    return false;
+}
+
+function sumInUri($uri)
+{
+    $result = 0;
+    $uri = str_replace('=', ',', $uri);
+    $uri = str_replace(' ', ',', $uri);
+    $tempArray = explode(',', $uri);
+    for ($i = 1; $i < sizeof($tempArray) - 1; $i++) {
+        $result += $tempArray[$i];
+    }
+    return $result;
 }
 
 
@@ -65,4 +108,4 @@ function parseTcpStringAsHttpRequest($string)
 
 $http = parseTcpStringAsHttpRequest($contents);
 processHttpRequest($http["method"], $http["uri"], $http["headers"], $http["body"]);
-echo(json_encode($http, JSON_PRETTY_PRINT));
+
