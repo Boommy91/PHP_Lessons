@@ -25,11 +25,11 @@ $contents = readHttpLikeInput();
 function outputHttpResponse($statuscode, $statusmessage, $headers, $body)
 {
     $finalMessage = "HTTP/1.1 $statuscode
-    Server: Apache/2.2.14 (Win32)
-    Connection: Closed
-    Content-Type: text/html; charset=utf-8
-    Content-Length: " . strlen($body) . "
-    $statusmessage
+Server: Apache/2.2.14 (Win32)
+Connection: Closed
+Content-Type: text/html; charset=utf-8
+Content-Length: " . strlen($body) . "
+$statusmessage
 ";
 
     /*foreach ($headers as $header) {
@@ -73,7 +73,7 @@ function sumInUri($uri)
     $uri = str_replace('=', ',', $uri);
     $uri = str_replace(' ', ',', $uri);
     $tempArray = explode(',', $uri);
-    for ($i = 1; $i < sizeof($tempArray) - 1; $i++) {
+    for ($i = 1; $i < sizeof($tempArray); $i++) {
         $result += $tempArray[$i];
     }
     return $result;
