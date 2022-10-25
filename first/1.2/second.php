@@ -25,19 +25,16 @@ function parseTcpStringAsHttpRequest($string)
 {
 
     $tempArray = explode("\n", $string);
-    $method = $tempArray[0];
+    $firstStringArray = explode(" ", $tempArray[0]);
+    $method = $firstStringArray[0];
+    $uri = $firstStringArray[1];
 
-    $uriArray = explode(' ', $method);
-    $uri = $uriArray[1];
-    if (str_contains("POST", $method) == false) {
-        $method = "POST";
-    } else {
-        $method = "GET";
-    }
 
-    for ($i = 1; $i < sizeof($tempArray) - 2; $i++) {
-        $tempHeadersArray = explode(': ', $tempArray[$i]);
-        $headers[$i - 1] = array($tempHeadersArray[0], $tempHeadersArray[1]);
+    for ($i = 1; $i < sizeof($tempArray) - 1; $i++) {
+        if (strlen($tempArray[$i] > 0)) {
+            $tempHeadersArray = explode(': ', $tempArray[$i]);
+            $headers[$i - 1] = array($tempHeadersArray[0], $tempHeadersArray[1]);
+        }
     }
     $body = $tempArray[sizeof($tempArray) - 1];
     return array(

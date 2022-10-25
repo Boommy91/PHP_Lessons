@@ -28,8 +28,7 @@ function outputHttpResponse($statuscode, $statusmessage, $headers, $body)
     Server: Apache/2.2.14 (Win32)
     Connection: Closed
     Content-Type: text/html; charset=utf-8
-    Content-Length: 2
-    
+    Content-Length: " . strlen($body) . "
     $statusmessage
 ";
 
@@ -83,19 +82,17 @@ function sumInUri($uri)
 
 function parseTcpStringAsHttpRequest($string)
 {
+    var_dump($string);
     $tempArray = explode("\n", $string);
-    $method = $tempArray[0];
-    if (str_contains($method, "POST") == true) {
-        $uri = str_replace("POST ", "", $method);
-        $method = "POST";
-    } else {
-        $uri = str_replace("GET ", "", $method);
-        $method = "GET";
-    }
+    $firstStringArray = explode(" ", $tempArray[0]);
+    $method = $firstStringArray[0];
+    $uri = $firstStringArray[1];
 
-    for ($i = 1; $i < sizeof($tempArray) - 2; $i++) {
-        $tempHeadersArray = explode(': ', $tempArray[$i]);
-        $headers[$i - 1] = array($tempHeadersArray[0], $tempHeadersArray[1]);
+    for ($i = 1; $i < sizeof($tempArray) - 1; $i++) {
+        if (strlen($tempArray[$i] > 0)) {
+            $tempHeadersArray = explode(': ', $tempArray[$i]);
+            $headers[$i - 1] = array($tempHeadersArray[0], $tempHeadersArray[1]);
+        }
     }
     $body = $tempArray[sizeof($tempArray) - 1];
     return array(
