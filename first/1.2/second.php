@@ -39,7 +39,6 @@ function parseTcpStringAsHttpRequest($string)
         $tempHeadersArray = explode(': ', $tempArray[$i]);
         $headers[$i - 1] = array($tempHeadersArray[0], $tempHeadersArray[1]);
     }
-
     $body = $tempArray[sizeof($tempArray) - 1];
     return array(
         "method" => $method,
