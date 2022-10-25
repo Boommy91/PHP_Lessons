@@ -27,11 +27,11 @@ function parseTcpStringAsHttpRequest($string)
     $tempArray = explode("\n", $string);
     $method = $tempArray[0];
 
+    $uriArray = explode(' ', $method);
+    $uri = $uriArray[1];
     if (str_contains("POST", $method) == false) {
-        $uri = str_replace("POST ", "", $method);
         $method = "POST";
     } else {
-        $uri = str_replace("GET ", "", $method);
         $method = "GET";
     }
 

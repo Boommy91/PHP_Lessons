@@ -24,13 +24,14 @@ $contents = readHttpLikeInput();
 
 function outputHttpResponse($statuscode, $statusmessage, $headers, $body)
 {
-
+    echo null;
 }
 
 function processHttpRequest($method, $uri, $headers, $body)
 {
+    if ($method === 'GET'){
 
-
+    }
     $statuscode = '';
     $statusmessage = '';
     outputHttpResponse($statuscode, $statusmessage, $headers, $body);
