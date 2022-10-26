@@ -47,24 +47,25 @@ function processHttpRequest($method, $uri, $headers, $body)
     } else {
         $statusmessage = 'Not Found';
     }
-
-
-
+    $test = 'student';
 
     if (file_exists($fileName)) {
         $file = file_get_contents($fileName);
         $arrFromFile = explode("\n", $file);
+
         foreach ($arrFromFile as $value) {
-            if (strpos($loginArr[1], $value) == true && strpos($passArr[1], $value) == true) {
-                var_dump("YES");
+            if (strpos($value, $loginArr[1]) !== false &&
+                strpos($value, $passArr[1]) !== false) {
                 $statuscode = '200';
+                $statusmessage = 'OK';
+
                 $body = '<h1 style="color:green">FOUND</h1>';
                 break;
-            } else {
-                $statuscode = '404';
-                $statusmessage = 'Not Found';
-                $body = '<h1 style="color:red">NOT FOUND</h1>';
             }
+            $statuscode = '404';
+            $statusmessage = 'Not Found';
+            $body = '<h1 style="color:red">NOT FOUND</h1>';
+
         }
     } else {
         $statuscode = '500';
