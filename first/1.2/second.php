@@ -29,13 +29,13 @@ function parseTcpStringAsHttpRequest($string)
     $method = $firstStringArray[0];
     $uri = $firstStringArray[1];
 
-
-    for ($i = 1; $i < sizeof($tempArray) - 1; $i++) {
-        if (strlen($tempArray[$i] > 0)) {
-            $tempHeadersArray = explode(': ', $tempArray[$i]);
-            $headers[$i - 1] = array($tempHeadersArray[0], $tempHeadersArray[1]);
+    foreach ($tempArray as $value) {
+        if (strpos($value, ':')) {
+            $tempHeadersArray = explode(': ', $value);
+            $headers[] = array($tempHeadersArray[0], $tempHeadersArray[1]);
         }
     }
+
     $body = $tempArray[sizeof($tempArray) - 1];
     return array(
         "method" => $method,

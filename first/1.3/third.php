@@ -56,27 +56,23 @@ function processHttpRequest($method, $uri, $headers, $body)
         $statuscode = "400 Bad Request";
     }
     $body = sumInUri($uri);
-    var_dump($body);
     outputHttpResponse($statuscode, $statusmessage, $headers, $body);
 }
 
 function isBeginSum($uri)
 {
     $tempArray = explode("?", $uri);
-    if ($tempArray[0] == "/sum") {
-        return true;
-    }
-    return false;
+    return $tempArray[0] == "/sum";
 }
 
 function sumInUri($uri)
 {
     $result = 0;
-    $uri = str_replace('=', ',', $uri);
-    $uri = str_replace(' ', ',', $uri);
+    $uri = preg_replace("/[^0-9,]/", "", $uri);
     $tempArray = explode(',', $uri);
-    for ($i = 1; $i < sizeof($tempArray); $i++) {
-        $result += $tempArray[$i];
+
+    foreach ($tempArray as $value) {
+        $result += $value;
     }
     return $result;
 }
@@ -89,10 +85,10 @@ function parseTcpStringAsHttpRequest($string)
     $method = $firstStringArray[0];
     $uri = $firstStringArray[1];
 
-    for ($i = 1; $i < sizeof($tempArray) - 1; $i++) {
-        if (strlen($tempArray[$i] > 0)) {
-            $tempHeadersArray = explode(': ', $tempArray[$i]);
-            $headers[$i - 1] = array($tempHeadersArray[0], $tempHeadersArray[1]);
+    foreach ($tempArray as $value) {
+        if (strpos($value, ':')) {
+            $tempHeadersArray = explode(': ', $value);
+            $headers[] = array($tempHeadersArray[0], $tempHeadersArray[1]);
         }
     }
     $body = $tempArray[sizeof($tempArray) - 1];

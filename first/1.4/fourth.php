@@ -41,26 +41,35 @@ function processHttpRequest($method, $uri, $headers, $body)
     $tempArr = explode("&", $body);
     $loginArr = explode("=", $tempArr[0]);
     $passArr = explode("=", $tempArr[1]);
-    if ($method == 'POST' && str_contains($uri, "checkLoginAndPassword")) {
+
+    if ($method == 'POST' && strpos($uri, "checkLoginAndPassword")) {
         $statusmessage = 'OK';
     } else {
         $statusmessage = 'Not Found';
     }
+
+
+
+
     if (file_exists($fileName)) {
         $file = file_get_contents($fileName);
-        if (str_contains($file, $loginArr[1]) && str_contains($file, $passArr[1])) {
-            $statuscode = '200';
-            $body = '<h1 style="color:green">FOUND</h1>';
-        } else {
-            $statuscode = '404';
-            $statusmessage = 'Not Found';
-            $body = '<h1 style="color:red">NOT FOUND</h1>';
+        $arrFromFile = explode("\n", $file);
+        foreach ($arrFromFile as $value) {
+            if (strpos($loginArr[1], $value) == true && strpos($passArr[1], $value) == true) {
+                var_dump("YES");
+                $statuscode = '200';
+                $body = '<h1 style="color:green">FOUND</h1>';
+                break;
+            } else {
+                $statuscode = '404';
+                $statusmessage = 'Not Found';
+                $body = '<h1 style="color:red">NOT FOUND</h1>';
+            }
         }
     } else {
         $statuscode = '500';
         $statusmessage = 'Internal Server Error';
     }
-
 
     outputHttpResponse($statuscode, $statusmessage, $headers, $body);
 }
@@ -69,11 +78,11 @@ function processHttpRequest($method, $uri, $headers, $body)
 function sumInUri($uri)
 {
     $result = 0;
-    $uri = str_replace('=', ',', $uri);
-    $uri = str_replace(' ', ',', $uri);
+    $uri = preg_replace("/[^0-9,]/", "", $uri);
     $tempArray = explode(',', $uri);
-    for ($i = 1; $i < sizeof($tempArray); $i++) {
-        $result += $tempArray[$i];
+
+    foreach ($tempArray as $value) {
+        $result += $value;
     }
     return $result;
 }
@@ -86,12 +95,13 @@ function parseTcpStringAsHttpRequest($string)
     $method = $firstStringArray[0];
     $uri = $firstStringArray[1];
 
-    for ($i = 1; $i < sizeof($tempArray) - 1; $i++) {
-        if (strlen($tempArray[$i] > 0)) {
-            $tempHeadersArray = explode(': ', $tempArray[$i]);
-            $headers[$i - 1] = array($tempHeadersArray[0], $tempHeadersArray[1]);
+    foreach ($tempArray as $value) {
+        if (strpos($value, ':')) {
+            $tempHeadersArray = explode(': ', $value);
+            $headers[] = array($tempHeadersArray[0], $tempHeadersArray[1]);
         }
     }
+
     $body = $tempArray[sizeof($tempArray) - 1];
     return array(
         "method" => $method,
