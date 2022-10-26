@@ -24,51 +24,41 @@ $contents = readHttpLikeInput();
 
 function outputHttpResponse($statuscode, $statusmessage, $headers, $body)
 {
-    $finalMessage = "HTTP/1.1 $statuscode $statusmessage
-Server: Apache/2.2.14 (Win32)
-Content-Length: " . strlen($body) . "
-Connection: Closed
-Content-Type: text/html; charset=utf-8
-
-$body";
+    $finalMessage = "GET / HTTP/1.1
+Host: student.shpp.me
+Accept: image/gif, image/jpeg, */*
+Accept-Language: en-us
+Accept-Encoding: gzip, deflate
+User-Agent: Mozilla/4.0";
     echo $finalMessage;
 }
 
 function processHttpRequest($method, $uri, $headers, $body)
 {
-    $fileName = 'password.txt';
-
-    $tempArr = explode("&", $body);
-    $loginArr = explode("=", $tempArr[0]);
-    $passArr = explode("=", $tempArr[1]);
-
-    if ($method == 'POST' && strpos($uri, "checkLoginAndPassword")) {
+    $readFilePath = $uri;
+    if (file_exists($readFilePath)) {
+        $statuscode = '200';
         $statusmessage = 'OK';
-    } else {
-        $statusmessage = 'Not Found';
-    }
+        $textFileRead = file_get_contents($readFilePath);
+        $tempArr = explode('/', $readFilePath);
+        $fileName = $tempArr[sizeof($tempArr) - 1];
 
-    if (file_exists($fileName)) {
-        $file = file_get_contents($fileName);
-        $arrFromFile = explode("\n", $file);
-
-        foreach ($arrFromFile as $value) {
-            if (strpos($value, $loginArr[1]) !== false &&
-                strpos($value, $passArr[1]) !== false) {
-                $statuscode = '200';
-                $statusmessage = 'OK';
-
-                $body = '<h1 style="color:green">FOUND</h1>';
-                break;
+        foreach ($headers as $header) {
+            if (strpos('Host', $header[0]) !== false) {
+                if (strpos('student.shpp.me', $header[1]) !== false) {
+                    file_put_contents('student/' . $fileName, $textFileRead);
+                } elseif (strpos('another.shpp.me', $header[1]) !== false) {
+                    file_put_contents('another/' . $fileName, $textFileRead);
+                } else {
+                    $statuscode = '404';
+                    $statusmessage = 'Not Found';
+                }
             }
-            $statuscode = '404';
-            $statusmessage = 'Not Found';
-            $body = '<h1 style="color:red">NOT FOUND</h1>';
-
         }
+
     } else {
-        $statuscode = '500';
-        $statusmessage = 'Internal Server Error';
+        $statuscode = '404';
+        $statusmessage = 'Not Found';
     }
 
     outputHttpResponse($statuscode, $statusmessage, $headers, $body);
