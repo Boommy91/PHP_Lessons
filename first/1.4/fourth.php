@@ -24,54 +24,47 @@ $contents = readHttpLikeInput();
 
 function outputHttpResponse($statuscode, $statusmessage, $headers, $body)
 {
-    $finalMessage = "HTTP/1.1 $statuscode
+    $finalMessage = "HTTP/1.1 $statuscode $statusmessage
 Server: Apache/2.2.14 (Win32)
+Content-Length: " . strlen($body) . "
 Connection: Closed
 Content-Type: text/html; charset=utf-8
-Content-Length: " . strlen($body) . "
-$statusmessage
-";
 
-    /*foreach ($headers as $header) {
-        $finalMessage .= "\n";
-        foreach ($header as $value) {
-            $finalMessage .= $value;
-        }
-    }
-    $finalMessage .= "\n" . $body;*/
+$body";
     echo $finalMessage;
 }
 
 function processHttpRequest($method, $uri, $headers, $body)
 {
+    $fileName = 'password.txt';
+
     $tempArr = explode("&", $body);
     $loginArr = explode("=", $tempArr[0]);
     $passArr = explode("=", $tempArr[1]);
-    var_dump($loginArr);
-    var_dump($passArr);
-
-    if ($method == 'POST' && strpos($uri, '?nums=')) {
-        if (isBeginSum($uri)) {
-            $statuscode = '200 OK';
-            $statusmessage = sumInUri($uri);
+    if ($method == 'POST' && str_contains($uri, "checkLoginAndPassword")) {
+        $statusmessage = 'OK';
+    } else {
+        $statusmessage = 'Not Found';
+    }
+    if (file_exists($fileName)) {
+        $file = file_get_contents($fileName);
+        if (str_contains($file, $loginArr[1]) && str_contains($file, $passArr[1])) {
+            $statuscode = '200';
+            $body = '<h1 style="color:green">FOUND</h1>';
         } else {
-            $statuscode = '400 Not Found';
-            $statusmessage = 'not found';
+            $statuscode = '404';
+            $statusmessage = 'Not Found';
+            $body = '<h1 style="color:red">NOT FOUND</h1>';
         }
     } else {
-        $statuscode = "400 Bad Request";
+        $statuscode = '500';
+        $statusmessage = 'Internal Server Error';
     }
+
+
     outputHttpResponse($statuscode, $statusmessage, $headers, $body);
 }
 
-function isBeginSum($uri)
-{
-    $tempArray = explode("?", $uri);
-    if ($tempArray[0] == "/sum") {
-        return true;
-    }
-    return false;
-}
 
 function sumInUri($uri)
 {
