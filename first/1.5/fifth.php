@@ -64,7 +64,6 @@ function processHttpRequest($method, $uri, $headers, $body)
     outputHttpResponse($statuscode, $statusmessage, $headers, $body);
 }
 
-
 function sumInUri($uri)
 {
     $result = 0;
@@ -76,7 +75,6 @@ function sumInUri($uri)
     }
     return $result;
 }
-
 
 function parseTcpStringAsHttpRequest($string)
 {
